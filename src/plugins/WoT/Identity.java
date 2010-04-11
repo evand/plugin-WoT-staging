@@ -39,6 +39,7 @@ public class Identity implements Cloneable {
 	public static final int MAX_PROPERTY_NAME_LENGTH = 256;
 	public static final int MAX_PROPERTY_VALUE_LENGTH = 10 * 1024;
 	public static final int MAX_PROPERTY_AMOUNT = 64;
+	public static final int MAX_NICKNAME_LENGTH = 50;
 
 	/** A unique identifier used to query this Identity from the database. In fact, it is simply a String representing its routing key. */
 	protected final String mID;
@@ -319,7 +320,7 @@ public class Identity implements Cloneable {
 	/* IMPORTANT: This code is duplicated in plugins.Freetalk.WoT.WoTIdentity.validateNickname().
 	 * Please also modify it there if you modify it here */
 	public boolean isNicknameValid(String newNickname) {
-		return newNickname.length() > 0 && newNickname.length() < 50
+		return newNickname.length() > 0 && newNickname.length() <= MAX_NICKNAME_LENGTH
 			&& StringValidityChecker.containsNoIDNBlacklistCharacters(newNickname)
 			&& StringValidityChecker.containsNoInvalidCharacters(newNickname)
 			&& StringValidityChecker.containsNoLinebreaks(newNickname)
@@ -340,7 +341,10 @@ public class Identity implements Cloneable {
 		
 		if (newNickname != null) {
 			if(newNickname.length() == 0) throw new InvalidParameterException("Blank nickname");
-			if(newNickname.length() > 50) throw new InvalidParameterException("Nickname is too long (50 chars max)");
+			if(newNickname.length() > MAX_NICKNAME_LENGTH) {
+				throw new InvalidParameterException("Nickname is too long ("
+						+ MAX_NICKNAME_LENGTH + " chars max)");
+			}
 			
 			if(!isNicknameValid(newNickname)) {
 				throw new InvalidParameterException("Nickname contains illegal characters.");
